@@ -38,19 +38,29 @@ end
 
 Mh1 = [Yh1; Uh1];
 Mh2 = [Yh2; Uh2];
-Qf = orth(Mh1')';
-Qg = orth(Mh2')';
+Qf = orth(Mh1');
+Qg = orth(Mh2');
 [Us, S, V] = svd(Qf'*Qg);
 Xh = Qg * V;
-n = 10;
+n = 31;
 X = zeros(n, j);
 for m = 1:n
-    X(m,:) = Xh(m,:);
+    X(m,:) = Xh(:,m);
 end
 
-C = Y(:, i:j-1)' \ X(:, i:j-1)';
-B = X(:, i+1:j-1)' \ U(:, i:j-2)';
-A = X(:, i+1:j-1)' \ X(:, i:j-2)' ;
+
+D3 = X;
+D4 = Y(:, i:i+j-1);
+
+C = D4*D3'*pinv((D3*D3'));
+
+D2 = [X(:, 1:end-1); U(:, i+(1:j-1))];
+D1 = X(:, 2:end);
+
+AB = D1*D2'*pinv((D2*D2'));
+
+A = AB(:, 1:n);
+B = AB(:, n+1:end);
 
 dt = 20;
 figure(1)
